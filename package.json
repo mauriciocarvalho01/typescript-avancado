@@ -4,7 +4,7 @@
   "description": "API em NodeJs utilizando Typescript seguindo as melhores metodologias do mercado.\r - Design Patterns\r - Clean Architecture\r - SOLID\r - DDD\r - TDD\r - Git\r - Docker\r - MongoDb\r - MongoDb\r - CI/CD\r - Swagger",
   "main": "index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "rimraf dist && tsc"
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,8 @@
   },
   "engines": {
     "node": "16.x"
+  },
+  "dependencies": {
+    "rimraf": "^3.0.2"
   }
 }
