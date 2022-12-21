@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfiug.json",
+  "exclude": ["tests"]
+}
