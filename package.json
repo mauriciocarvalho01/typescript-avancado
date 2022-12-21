@@ -1,0 +1,20 @@
+{
+  "name": "typescript-avancado",
+  "version": "1.0.0",
+  "description": "API em NodeJs utilizando Typescript seguindo as melhores metodologias do mercado.\r - Design Patterns\r - Clean Architecture\r - SOLID\r - DDD\r - TDD\r - Git\r - Docker\r - MongoDb\r - MongoDb\r - CI/CD\r - Swagger",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mauriciocarvalho01/typescript-avancado.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mauriciocarvalho01/typescript-avancado/issues"
+  },
+  "homepage": "https://github.com/mauriciocarvalho01/typescript-avancado#readme"
+}
