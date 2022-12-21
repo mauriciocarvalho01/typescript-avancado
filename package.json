@@ -4,6 +4,7 @@
   "description": "API em NodeJs utilizando Typescript seguindo as melhores metodologias do mercado.\r - Design Patterns\r - Clean Architecture\r - SOLID\r - DDD\r - TDD\r - Git\r - Docker\r - MongoDb\r - MongoDb\r - CI/CD\r - Swagger",
   "main": "index.js",
   "scripts": {
+    "start": "node dist/main/api",
     "build": "rimraf dist && tsc"
   },
   "repository": {
@@ -18,12 +19,15 @@
   },
   "homepage": "https://github.com/mauriciocarvalho01/typescript-avancado#readme",
   "devDependencies": {
+    "@types/module-alias": "^2.0.1",
+    "@types/node": "^18.11.17",
     "typescript": "^4.9.4"
   },
   "engines": {
     "node": "16.x"
   },
   "dependencies": {
+    "module-alias": "^2.2.2",
     "rimraf": "^3.0.2"
   }
 }
