@@ -1,4 +1,5 @@
 #typescript-avancado
+
 API em NodeJs utilizando Typescript seguindo as melhores metodologias do mercado.
 - Design Patterns
 - Clean Architecture
@@ -7,6 +8,7 @@ API em NodeJs utilizando Typescript seguindo as melhores metodologias do mercado
 - TDD
 - Git
 - Docker
+- MongoDb
 - MongoDb
 - CI/CD
 - Swagger
