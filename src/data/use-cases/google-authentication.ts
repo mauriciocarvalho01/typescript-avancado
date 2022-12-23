@@ -2,7 +2,7 @@ import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
-import { GoogleAccount } from '@/domain/models'
+import { AccessToken, GoogleAccount } from '@/domain/models'
 import { TokenGenarator } from '@/data/contracts/crypto'
 
 export class GoogleAuthenticationUseCase {
@@ -17,7 +17,7 @@ export class GoogleAuthenticationUseCase {
       const accountData = await this.userAccountRepository.load({ email: googleData.email })
       const googleAccount = new GoogleAccount(googleData, accountData)
       const { id } = await this.userAccountRepository.saveWithGoogle(googleAccount)
-      await this.crypto.generateToken({ key: id })
+      await this.crypto.generateToken({ key: id, expirationInMs: AccessToken.expirationInMs })
     }
     return new AuthenticationError()
   }

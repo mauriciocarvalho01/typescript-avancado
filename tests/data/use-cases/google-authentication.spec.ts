@@ -3,7 +3,7 @@ import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authenticat
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
 import { TokenGenarator } from '@/data/contracts/crypto'
-import { GoogleAccount } from '@/domain/models'
+import { AccessToken, GoogleAccount } from '@/domain/models'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -78,7 +78,10 @@ describe('GoogleAuthenticationUseCase', () => {
 
   it('Should call TokenGenerator with corret params', async () => {
     await sut.perform({ token })
-    expect(crypto.generateToken).toHaveBeenCalledWith({ key: 'any_account_id' })
+    expect(crypto.generateToken).toHaveBeenCalledWith({
+      key: 'any_account_id',
+      expirationInMs: AccessToken.expirationInMs
+    })
     expect(crypto.generateToken).toHaveBeenCalledTimes(1)
   })
 })
