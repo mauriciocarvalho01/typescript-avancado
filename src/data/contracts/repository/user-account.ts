@@ -13,26 +13,15 @@ export namespace LoadUserAccountRepository {
   }
 }
 
-export interface CreateGoogleAccountRepository {
-  createFromGoogle: (params: CreateGoogleAccountRepository.Params) => Promise<void>
+export interface SaveGoogleAccountRepository {
+  saveWithGoogle: (params: SaveGoogleAccountRepository.Params) => Promise<void>
 }
 
-export namespace CreateGoogleAccountRepository {
+export namespace SaveGoogleAccountRepository {
   export type Params = {
+    id?: string
     name: string
     email: string
-    googleId: string
-  }
-}
-
-export interface UpdateGoogleAccountRepository {
-  updateWithGoogle: (params: UpdateGoogleAccountRepository.Params) => Promise<void>
-}
-
-export namespace UpdateGoogleAccountRepository {
-  export type Params = {
-    id: string
-    name: string
     googleId: string
   }
 }

@@ -2,7 +2,7 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { mock, MockProxy } from 'jest-mock-extended'
-import { LoadUserAccountRepository, CreateGoogleAccountRepository, UpdateGoogleAccountRepository } from '@/data/contracts/repository'
+import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
 
 // Factory Patthern
 // type SuTypes = {
@@ -20,7 +20,7 @@ import { LoadUserAccountRepository, CreateGoogleAccountRepository, UpdateGoogleA
 
 describe('GoogleAuthenticationUseCase', () => {
   let googleApi: MockProxy<LoadGoogleUserApi>
-  let userAccountRepository: MockProxy<LoadUserAccountRepository & CreateGoogleAccountRepository & UpdateGoogleAccountRepository>
+  let userAccountRepository: MockProxy<LoadUserAccountRepository & SaveGoogleAccountRepository>
   let sut: GoogleAuthenticationUseCase
   const token = 'any_token'
   beforeEach(() => {
@@ -53,28 +53,29 @@ describe('GoogleAuthenticationUseCase', () => {
     expect(userAccountRepository.load).toHaveBeenCalledTimes(1)
   })
 
-  it('Should call CreateGoogleAccountRepository when LoadUserAccountRepository returns undefined', async () => {
+  it('Should create account with google data', async () => {
     await sut.perform({ token })
-    expect(userAccountRepository.createFromGoogle).toHaveBeenCalledWith({
+    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledWith({
       name: 'any_google_name',
       email: 'any_google_email',
       googleId: 'any_google_id'
     })
-    expect(userAccountRepository.createFromGoogle).toHaveBeenCalledTimes(1)
+    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledTimes(1)
   })
 
-  it('Should call UpdateGoogleAccountRepository when LoadUserAccountRepository returns data', async () => {
+  it('Should not update account name', async () => {
     userAccountRepository.load.mockResolvedValueOnce({
       id: 'any_id',
       name: 'any_name'
     })
     await sut.perform({ token })
-    expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledWith({
+    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledWith({
       name: 'any_name',
       id: 'any_id',
+      email: 'any_google_email',
       googleId: 'any_google_id'
     })
-    expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledTimes(1)
+    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledTimes(1)
   })
 
   it('Should update account name', async () => {
@@ -82,11 +83,12 @@ describe('GoogleAuthenticationUseCase', () => {
       id: 'any_id'
     })
     await sut.perform({ token })
-    expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledWith({
+    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledWith({
       name: 'any_google_name',
       id: 'any_id',
+      email: 'any_google_email',
       googleId: 'any_google_id'
     })
-    expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledTimes(1)
+    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledTimes(1)
   })
 })
