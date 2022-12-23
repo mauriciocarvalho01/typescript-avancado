@@ -38,6 +38,7 @@ describe('GoogleAuthenticationUseCase', () => {
     })
     userAccountRepository = mock()
     crypto = mock()
+    crypto.generateToken.mockResolvedValue('any_generated_token')
     userAccountRepository.load.mockResolvedValue(undefined)
     userAccountRepository.saveWithGoogle.mockResolvedValue({ id: 'any_account_id' })
     sut = new GoogleAuthenticationUseCase(googleApi, userAccountRepository, crypto)
@@ -83,5 +84,11 @@ describe('GoogleAuthenticationUseCase', () => {
       expirationInMs: AccessToken.expirationInMs
     })
     expect(crypto.generateToken).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should returns an  AccessToken on success', async () => {
+    const authResult = await sut.perform({ token })
+
+    expect(authResult).toEqual(new AccessToken('any_generated_token'))
   })
 })

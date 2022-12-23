@@ -5,19 +5,20 @@ import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/c
 import { AccessToken, GoogleAccount } from '@/domain/models'
 import { TokenGenarator } from '@/data/contracts/crypto'
 
-export class GoogleAuthenticationUseCase {
+export class GoogleAuthenticationUseCase implements GoogleAuthentication {
   constructor (
     private readonly googleApi: LoadGoogleUserApi,
     private readonly userAccountRepository: LoadUserAccountRepository & SaveGoogleAccountRepository,
     private readonly crypto: TokenGenarator) { }
 
-  async perform (params: GoogleAuthentication.Params): Promise<AuthenticationError> {
+  async perform (params: GoogleAuthentication.Params): Promise<GoogleAuthentication.Result> {
     const googleData = await this.googleApi.loadUser(params)
     if (googleData !== undefined) {
       const accountData = await this.userAccountRepository.load({ email: googleData.email })
       const googleAccount = new GoogleAccount(googleData, accountData)
       const { id } = await this.userAccountRepository.saveWithGoogle(googleAccount)
-      await this.crypto.generateToken({ key: id, expirationInMs: AccessToken.expirationInMs })
+      const token = await this.crypto.generateToken({ key: id, expirationInMs: AccessToken.expirationInMs })
+      return new AccessToken(token)
     }
     return new AuthenticationError()
   }
