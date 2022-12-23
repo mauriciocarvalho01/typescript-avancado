@@ -1,5 +1,6 @@
 import { GoogleAuthentication } from '@/domain/features'
 import { AuthenticationError } from '@/domain/errors'
+import { LoadGoogleUserApi } from '@/data/contracts/apis'
 
 class GoogleAuthenticationUseCase {
   constructor (private readonly loadGoogleUserApi: LoadGoogleUserApi) { }
@@ -7,17 +8,6 @@ class GoogleAuthenticationUseCase {
     await this.loadGoogleUserApi.loadUser(params)
     return new AuthenticationError()
   }
-}
-
-interface LoadGoogleUserApi {
-  loadUser: (params: LoadGoogleUserApi.Params) => Promise<void>
-}
-
-namespace LoadGoogleUserApi {
-  export type Params = {
-    token: string
-  }
-  export type Result = undefined
 }
 
 class LoadGoogleUserApiSpy implements LoadGoogleUserApi {
@@ -30,14 +20,14 @@ class LoadGoogleUserApiSpy implements LoadGoogleUserApi {
 }
 
 describe('GoogleAuthenticationUseCase', () => {
-  it('should call LoadGoogleUserApi with correct params', async () => {
+  it('Should call LoadGoogleUserApi with correct params', async () => {
     const loadGoogleUserApi = new LoadGoogleUserApiSpy()
     const sut = new GoogleAuthenticationUseCase(loadGoogleUserApi)
     await sut.perform({ token: 'any_token' })
     expect(loadGoogleUserApi.token).toBe('any_token')
   })
 
-  it('should return AuthenticationError when LoadGoogleUserApi returns undefined', async () => {
+  it('Should return AuthenticationError when LoadGoogleUserApi returns undefined', async () => {
     const loadGoogleUserApi = new LoadGoogleUserApiSpy()
     loadGoogleUserApi.result = undefined
     const sut = new GoogleAuthenticationUseCase(loadGoogleUserApi)
