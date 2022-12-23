@@ -2,6 +2,7 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
+import { TokenGenarator } from '@/data/contracts/crypto'
 import { GoogleAccount } from '@/domain/models'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -23,6 +24,7 @@ import { mock, MockProxy } from 'jest-mock-extended'
 jest.mock('@/domain/models/google-account')
 
 describe('GoogleAuthenticationUseCase', () => {
+  let crypto: MockProxy<TokenGenarator>
   let googleApi: MockProxy<LoadGoogleUserApi>
   let userAccountRepository: MockProxy<LoadUserAccountRepository & SaveGoogleAccountRepository>
   let sut: GoogleAuthenticationUseCase
@@ -35,8 +37,10 @@ describe('GoogleAuthenticationUseCase', () => {
       googleId: 'any_google_id'
     })
     userAccountRepository = mock()
+    crypto = mock()
     userAccountRepository.load.mockResolvedValue(undefined)
-    sut = new GoogleAuthenticationUseCase(googleApi, userAccountRepository)
+    userAccountRepository.saveWithGoogle.mockResolvedValue({ id: 'any_account_id' })
+    sut = new GoogleAuthenticationUseCase(googleApi, userAccountRepository, crypto)
   })
 
   it('Should call LoadGoogleUserApi with correct params', async () => {
@@ -70,5 +74,11 @@ describe('GoogleAuthenticationUseCase', () => {
 
     expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledWith({ any: 'any' })
     expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should call TokenGenerator with corret params', async () => {
+    await sut.perform({ token })
+    expect(crypto.generateToken).toHaveBeenCalledWith({ key: 'any_account_id' })
+    expect(crypto.generateToken).toHaveBeenCalledTimes(1)
   })
 })

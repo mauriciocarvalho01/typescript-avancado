@@ -14,7 +14,7 @@ export namespace LoadUserAccountRepository {
 }
 
 export interface SaveGoogleAccountRepository {
-  saveWithGoogle: (params: SaveGoogleAccountRepository.Params) => Promise<void>
+  saveWithGoogle: (params: SaveGoogleAccountRepository.Params) => Promise<SaveGoogleAccountRepository.Result>
 }
 
 export namespace SaveGoogleAccountRepository {
@@ -23,5 +23,9 @@ export namespace SaveGoogleAccountRepository {
     name: string
     email: string
     googleId: string
+  }
+
+  export type Result = {
+    id: string
   }
 }
