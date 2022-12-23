@@ -2,6 +2,7 @@ import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
+import { GoogleAccount } from '@/domain/models'
 
 export class GoogleAuthenticationUseCase {
   constructor (
@@ -12,12 +13,8 @@ export class GoogleAuthenticationUseCase {
     const googleData = await this.googleApi.loadUser(params)
     if (googleData !== undefined) {
       const accountData = await this.userAccountRepository.load({ email: googleData.email })
-      await this.userAccountRepository.saveWithGoogle({
-        id: accountData?.id,
-        name: accountData?.name ?? googleData.name,
-        email: googleData.email,
-        googleId: googleData.googleId
-      })
+      const googleAccount = new GoogleAccount(googleData, accountData)
+      await this.userAccountRepository.saveWithGoogle(googleAccount)
     }
     return new AuthenticationError()
   }
