@@ -2,7 +2,7 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { mock, MockProxy } from 'jest-mock-extended'
-import { LoadUserAccountRepository } from '@/data/contracts/repository'
+import { LoadUserAccountRepository, CreateGoogleAccountRepository } from '@/data/contracts/repository'
 
 // Factory Patthern
 // type SuTypes = {
@@ -21,6 +21,7 @@ import { LoadUserAccountRepository } from '@/data/contracts/repository'
 describe('GoogleAuthenticationUseCase', () => {
   let loadGoogleUserApi: MockProxy<LoadGoogleUserApi>
   let loadUserAccountRepository: MockProxy<LoadUserAccountRepository>
+  let createGoogleAccountRepository: MockProxy<CreateGoogleAccountRepository>
   let sut: GoogleAuthenticationUseCase
   const token = 'any_token'
   beforeEach(() => {
@@ -31,7 +32,8 @@ describe('GoogleAuthenticationUseCase', () => {
       googleId: 'any_google_id'
     })
     loadUserAccountRepository = mock()
-    sut = new GoogleAuthenticationUseCase(loadGoogleUserApi, loadUserAccountRepository)
+    createGoogleAccountRepository = mock()
+    sut = new GoogleAuthenticationUseCase(loadGoogleUserApi, loadUserAccountRepository, createGoogleAccountRepository)
   })
 
   it('Should call LoadGoogleUserApi with correct params', async () => {
@@ -50,5 +52,16 @@ describe('GoogleAuthenticationUseCase', () => {
     await sut.perform({ token })
     expect(loadUserAccountRepository.load).toHaveBeenCalledWith({ email: 'any_google_email' })
     expect(loadUserAccountRepository.load).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should call CreateGoogleAccountRepository when LoadGoogleUserApi return undefined', async () => {
+    loadUserAccountRepository.load.mockResolvedValueOnce(undefined)
+    await sut.perform({ token })
+    expect(createGoogleAccountRepository.createFromGoogle).toHaveBeenCalledWith({
+      name: 'any_google_name',
+      email: 'any_google_email',
+      googleId: 'any_google_id'
+    })
+    expect(createGoogleAccountRepository.createFromGoogle).toHaveBeenCalledTimes(1)
   })
 })
