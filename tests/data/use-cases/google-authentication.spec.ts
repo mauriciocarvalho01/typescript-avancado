@@ -5,8 +5,10 @@ import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authenticat
 class LoadGoogleUserApiSpy implements LoadGoogleUserApi {
   token?: string
   result = undefined
+  callsCount = 0
   async loadUser (params: LoadGoogleUserApi.Params): Promise<LoadGoogleUserApi.Result> {
     this.token = params.token
+    this.callsCount++
     return this.result
   }
 }
@@ -17,6 +19,7 @@ describe('GoogleAuthenticationUseCase', () => {
     const sut = new GoogleAuthenticationUseCase(loadGoogleUserApi)
     await sut.perform({ token: 'any_token' })
     expect(loadGoogleUserApi.token).toBe('any_token')
+    expect(loadGoogleUserApi.callsCount).toBe(1)
   })
 
   it('Should return AuthenticationError when LoadGoogleUserApi returns undefined', async () => {
