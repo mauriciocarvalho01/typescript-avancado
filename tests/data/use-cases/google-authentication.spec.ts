@@ -52,7 +52,7 @@ describe('GoogleAuthenticationUseCase', () => {
     expect(userAccountRepository.load).toHaveBeenCalledTimes(1)
   })
 
-  it('Should call CreateGoogleAccountRepository when LoadGoogleUserApi return undefined', async () => {
+  it('Should call CreateGoogleAccountRepository when LoadUserAccountRepository return undefined', async () => {
     userAccountRepository.load.mockResolvedValueOnce(undefined)
     await sut.perform({ token })
     expect(userAccountRepository.createFromGoogle).toHaveBeenCalledWith({
