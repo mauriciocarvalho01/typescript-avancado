@@ -2,7 +2,7 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { mock, MockProxy } from 'jest-mock-extended'
-import { LoadUserAccountRepository, CreateGoogleAccountRepository } from '@/data/contracts/repository'
+import { LoadUserAccountRepository, CreateGoogleAccountRepository, UpdateGoogleAccountRepository } from '@/data/contracts/repository'
 
 // Factory Patthern
 // type SuTypes = {
@@ -20,7 +20,7 @@ import { LoadUserAccountRepository, CreateGoogleAccountRepository } from '@/data
 
 describe('GoogleAuthenticationUseCase', () => {
   let googleApi: MockProxy<LoadGoogleUserApi>
-  let userAccountRepository: MockProxy<LoadUserAccountRepository & CreateGoogleAccountRepository>
+  let userAccountRepository: MockProxy<LoadUserAccountRepository & CreateGoogleAccountRepository & UpdateGoogleAccountRepository>
   let sut: GoogleAuthenticationUseCase
   const token = 'any_token'
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('GoogleAuthenticationUseCase', () => {
     expect(userAccountRepository.load).toHaveBeenCalledTimes(1)
   })
 
-  it('Should call CreateGoogleAccountRepository when LoadUserAccountRepository return undefined', async () => {
+  it('Should call CreateGoogleAccountRepository when LoadUserAccountRepository returns undefined', async () => {
     userAccountRepository.load.mockResolvedValueOnce(undefined)
     await sut.perform({ token })
     expect(userAccountRepository.createFromGoogle).toHaveBeenCalledWith({
@@ -61,5 +61,19 @@ describe('GoogleAuthenticationUseCase', () => {
       googleId: 'any_google_id'
     })
     expect(userAccountRepository.createFromGoogle).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should call UpdateGoogleAccountRepository when LoadUserAccountRepository returns data', async () => {
+    userAccountRepository.load.mockResolvedValueOnce({
+      id: 'any_id',
+      name: 'any_name'
+    })
+    await sut.perform({ token })
+    expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledWith({
+      name: 'any_name',
+      id: 'any_id',
+      googleId: 'any_google_id'
+    })
+    expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledTimes(1)
   })
 })
