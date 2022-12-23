@@ -91,4 +91,28 @@ describe('GoogleAuthenticationUseCase', () => {
 
     expect(authResult).toEqual(new AccessToken('any_generated_token'))
   })
+
+  it('Should rethrow if LoadGoogleUserApi throws', async () => {
+    googleApi.loadUser.mockRejectedValueOnce(new Error('google_error'))
+    const promise = sut.perform({ token })
+    await expect(promise).rejects.toThrow(new Error('google_error'))
+  })
+
+  it('Should rethrow if LoadUserAccountRepository throws', async () => {
+    userAccountRepository.load.mockRejectedValueOnce(new Error('account_error'))
+    const promise = sut.perform({ token })
+    await expect(promise).rejects.toThrow(new Error('account_error'))
+  })
+
+  it('Should rethrow if SaveGoogleAccountRepository throws', async () => {
+    userAccountRepository.saveWithGoogle.mockRejectedValueOnce(new Error('save_error'))
+    const promise = sut.perform({ token })
+    await expect(promise).rejects.toThrow(new Error('save_error'))
+  })
+
+  it('Should rethrow if TokenGenerator throws', async () => {
+    crypto.generateToken.mockRejectedValueOnce(new Error('token_error'))
+    const promise = sut.perform({ token })
+    await expect(promise).rejects.toThrow(new Error('token_error'))
+  })
 })
