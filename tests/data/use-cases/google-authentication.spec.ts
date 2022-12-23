@@ -1,8 +1,10 @@
 import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
-import { mock, MockProxy } from 'jest-mock-extended'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
+import { GoogleAccount } from '@/domain/models'
+
+import { mock, MockProxy } from 'jest-mock-extended'
 
 // Factory Patthern
 // type SuTypes = {
@@ -17,6 +19,8 @@ import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/c
 //     sut, loadGoogleUserApi
 //   }
 // }
+
+jest.mock('@/domain/models/google-account')
 
 describe('GoogleAuthenticationUseCase', () => {
   let googleApi: MockProxy<LoadGoogleUserApi>
@@ -47,48 +51,24 @@ describe('GoogleAuthenticationUseCase', () => {
     expect(authResult).toEqual(new AuthenticationError())
   })
 
-  it('Should call LoadUserAccountRepository when LoadGoogleUserApi return data', async () => {
+  it('Should call LoadUserAccountRepository when LoadGoogleUserApi returns data', async () => {
     await sut.perform({ token })
     expect(userAccountRepository.load).toHaveBeenCalledWith({ email: 'any_google_email' })
     expect(userAccountRepository.load).toHaveBeenCalledTimes(1)
   })
 
-  it('Should create account with google data', async () => {
-    await sut.perform({ token })
-    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledWith({
-      name: 'any_google_name',
-      email: 'any_google_email',
-      googleId: 'any_google_id'
+  it('Should call SaveGoogleAccountRepository with GoogleAccount', async () => {
+    const googleAccountStub = jest.fn().mockImplementation(() => {
+      return {
+        any: 'any'
+      }
     })
-    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledTimes(1)
-  })
 
-  it('Should not update account name', async () => {
-    userAccountRepository.load.mockResolvedValueOnce({
-      id: 'any_id',
-      name: 'any_name'
-    })
-    await sut.perform({ token })
-    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledWith({
-      name: 'any_name',
-      id: 'any_id',
-      email: 'any_google_email',
-      googleId: 'any_google_id'
-    })
-    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledTimes(1)
-  })
+    jest.mocked(GoogleAccount).mockImplementation(googleAccountStub)
 
-  it('Should update account name', async () => {
-    userAccountRepository.load.mockResolvedValueOnce({
-      id: 'any_id'
-    })
     await sut.perform({ token })
-    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledWith({
-      name: 'any_google_name',
-      id: 'any_id',
-      email: 'any_google_email',
-      googleId: 'any_google_id'
-    })
+
+    expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledWith({ any: 'any' })
     expect(userAccountRepository.saveWithGoogle).toHaveBeenCalledTimes(1)
   })
 })
