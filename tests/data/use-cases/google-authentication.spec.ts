@@ -1,14 +1,6 @@
-import { GoogleAuthentication } from '@/domain/features'
 import { AuthenticationError } from '@/domain/errors'
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
-
-class GoogleAuthenticationUseCase {
-  constructor (private readonly loadGoogleUserApi: LoadGoogleUserApi) { }
-  async perform (params: GoogleAuthentication.Params): Promise<AuthenticationError> {
-    await this.loadGoogleUserApi.loadUser(params)
-    return new AuthenticationError()
-  }
-}
+import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
 
 class LoadGoogleUserApiSpy implements LoadGoogleUserApi {
   token?: string
