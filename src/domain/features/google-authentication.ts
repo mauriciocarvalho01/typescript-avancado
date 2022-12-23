@@ -5,7 +5,7 @@ export interface GoogleAuthentication {
   perform: (params: GoogleAuthentication.Params) => Promise<GoogleAuthentication.Result>
 }
 
-namespace GoogleAuthentication {
+export namespace GoogleAuthentication {
   export type Params = {
     token: string
   }
