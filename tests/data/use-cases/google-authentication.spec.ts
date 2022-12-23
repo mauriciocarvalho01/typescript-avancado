@@ -2,6 +2,7 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
 import { mock, MockProxy } from 'jest-mock-extended'
+import { LoadUserAccountRepository } from '@/data/contracts/repository'
 
 // Factory Patthern
 // type SuTypes = {
@@ -19,11 +20,18 @@ import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('GoogleAuthenticationUseCase', () => {
   let loadGoogleUserApi: MockProxy<LoadGoogleUserApi>
+  let loadUserAccountRepository: MockProxy<LoadUserAccountRepository>
   let sut: GoogleAuthenticationUseCase
   const token = 'any_token'
   beforeEach(() => {
     loadGoogleUserApi = mock()
-    sut = new GoogleAuthenticationUseCase(loadGoogleUserApi)
+    loadGoogleUserApi.loadUser.mockResolvedValue({
+      name: 'any_google_name',
+      email: 'any_google_email',
+      googleId: 'any_google_id'
+    })
+    loadUserAccountRepository = mock()
+    sut = new GoogleAuthenticationUseCase(loadGoogleUserApi, loadUserAccountRepository)
   })
 
   it('Should call LoadGoogleUserApi with correct params', async () => {
@@ -36,5 +44,11 @@ describe('GoogleAuthenticationUseCase', () => {
     loadGoogleUserApi.loadUser.mockResolvedValueOnce(undefined)
     const authResult = await sut.perform({ token })
     expect(authResult).toEqual(new AuthenticationError())
+  })
+
+  it('Should call LoadUserAccountRepository when LoadGoogleUserApi return data', async () => {
+    await sut.perform({ token })
+    expect(loadUserAccountRepository.load).toHaveBeenCalledWith({ email: 'any_google_email' })
+    expect(loadUserAccountRepository.load).toHaveBeenCalledTimes(1)
   })
 })
