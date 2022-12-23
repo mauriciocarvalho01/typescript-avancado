@@ -20,7 +20,7 @@ import { mock, MockProxy } from 'jest-mock-extended'
 describe('GoogleAuthenticationUseCase', () => {
   let loadGoogleUserApi: MockProxy<LoadGoogleUserApi>
   let sut: GoogleAuthenticationUseCase
-
+  const token = 'any_token'
   beforeEach(() => {
     loadGoogleUserApi = mock()
     sut = new GoogleAuthenticationUseCase(loadGoogleUserApi)
@@ -28,13 +28,13 @@ describe('GoogleAuthenticationUseCase', () => {
 
   it('Should call LoadGoogleUserApi with correct params', async () => {
     await sut.perform({ token: 'any_token' })
-    expect(loadGoogleUserApi.loadUser).toHaveBeenCalledWith({ token: 'any_token' })
+    expect(loadGoogleUserApi.loadUser).toHaveBeenCalledWith({ token })
     expect(loadGoogleUserApi.loadUser).toHaveBeenCalledTimes(1)
   })
 
   it('Should return AuthenticationError when LoadGoogleUserApi returns undefined', async () => {
     loadGoogleUserApi.loadUser.mockResolvedValueOnce(undefined)
-    const authResult = await sut.perform({ token: 'any_token' })
+    const authResult = await sut.perform({ token })
     expect(authResult).toEqual(new AuthenticationError())
   })
 })
