@@ -31,6 +31,7 @@ describe('GoogleAuthenticationUseCase', () => {
       googleId: 'any_google_id'
     })
     userAccountRepository = mock()
+    userAccountRepository.load.mockResolvedValue(undefined)
     sut = new GoogleAuthenticationUseCase(googleApi, userAccountRepository)
   })
 
@@ -53,7 +54,6 @@ describe('GoogleAuthenticationUseCase', () => {
   })
 
   it('Should call CreateGoogleAccountRepository when LoadUserAccountRepository returns undefined', async () => {
-    userAccountRepository.load.mockResolvedValueOnce(undefined)
     await sut.perform({ token })
     expect(userAccountRepository.createFromGoogle).toHaveBeenCalledWith({
       name: 'any_google_name',
@@ -71,6 +71,19 @@ describe('GoogleAuthenticationUseCase', () => {
     await sut.perform({ token })
     expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledWith({
       name: 'any_name',
+      id: 'any_id',
+      googleId: 'any_google_id'
+    })
+    expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should update account name', async () => {
+    userAccountRepository.load.mockResolvedValueOnce({
+      id: 'any_id'
+    })
+    await sut.perform({ token })
+    expect(userAccountRepository.updateWithGoogle).toHaveBeenCalledWith({
+      name: 'any_google_name',
       id: 'any_id',
       googleId: 'any_google_id'
     })

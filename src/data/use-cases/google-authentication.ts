@@ -12,8 +12,10 @@ export class GoogleAuthenticationUseCase {
     const googleData = await this.googleApi.loadUser(params)
     if (googleData !== undefined) {
       const accountData = await this.userAccountRepository.load({ email: googleData.email })
-      if (accountData?.name !== undefined) {
-        await this.userAccountRepository.updateWithGoogle({ id: accountData.id, name: accountData.name, googleId: googleData.googleId })
+      if (accountData !== undefined) {
+        await this.userAccountRepository.updateWithGoogle({
+          id: accountData.id, name: accountData.name ?? googleData.name, googleId: googleData.googleId
+        })
       } else {
         await this.userAccountRepository.createFromGoogle(googleData)
       }
