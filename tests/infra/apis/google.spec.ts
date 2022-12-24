@@ -1,4 +1,5 @@
-import { LoadGoogleUserApi } from '@/data/contracts/apis'
+import { GoogleApi, GoogleClient } from '@/infra/apis'
+
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('GoogleApi', () => {
@@ -21,27 +22,3 @@ describe('GoogleApi', () => {
     expect(googleClient.verifyIdToken).toHaveBeenCalledWith({ token, clientId })
   })
 })
-
-interface GoogleClient {
-  verifyIdToken: (params: GoogleClient.Input) => Promise<GoogleClient.Output>
-}
-
-namespace GoogleClient {
-  export type Input = {
-    token: string
-    clientId: string
-  }
-
-  export type Output = {
-    googleId: string
-    email: string
-    name: string
-  }
-}
-
-export class GoogleApi {
-  constructor (private readonly googleClient: GoogleClient, private readonly clientId: string) { }
-  async loadUser (params: LoadGoogleUserApi.Input): Promise<GoogleClient.Output> {
-    return await this.googleClient.verifyIdToken({ token: params.token, clientId: this.clientId })
-  }
-}
