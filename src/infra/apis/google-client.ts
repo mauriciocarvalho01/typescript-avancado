@@ -1,7 +1,5 @@
-import { LoadGoogleUserApi } from '@/data/contracts/apis'
-
 export interface GoogleClient {
-  verifyIdToken: (params: GoogleClient.Input) => Promise<LoadGoogleUserApi.Output>
+  verifyIdToken: <T = any> (params: GoogleClient.Input) => Promise<T>
 }
 
 export namespace GoogleClient {
