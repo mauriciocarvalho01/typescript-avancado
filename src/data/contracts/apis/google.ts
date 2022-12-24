@@ -1,12 +1,12 @@
 export interface LoadGoogleUserApi {
-  loadUser: (params: LoadGoogleUserApi.Params) => Promise<LoadGoogleUserApi.Result>
+  loadUser: (params: LoadGoogleUserApi.Input) => Promise<LoadGoogleUserApi.Output>
 }
 
 export namespace LoadGoogleUserApi {
-  export type Params = {
+  export type Input = {
     token: string
   }
-  export type Result = undefined | {
+  export type Output = undefined | {
     googleId: string
     name: string
     email: string

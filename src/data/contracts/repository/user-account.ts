@@ -1,31 +1,31 @@
 export interface LoadUserAccountRepository {
-  load: (params: LoadUserAccountRepository.Params) => Promise<LoadUserAccountRepository.Result>
+  load: (params: LoadUserAccountRepository.Input) => Promise<LoadUserAccountRepository.Output>
 }
 
 export namespace LoadUserAccountRepository {
-  export type Params = {
+  export type Input = {
     email: string
   }
 
-  export type Result = undefined | {
+  export type Output = undefined | {
     id: string
     name?: string
   }
 }
 
 export interface SaveGoogleAccountRepository {
-  saveWithGoogle: (params: SaveGoogleAccountRepository.Params) => Promise<SaveGoogleAccountRepository.Result>
+  saveWithGoogle: (params: SaveGoogleAccountRepository.Input) => Promise<SaveGoogleAccountRepository.Output>
 }
 
 export namespace SaveGoogleAccountRepository {
-  export type Params = {
+  export type Input = {
     id?: string
     name: string
     email: string
     googleId: string
   }
 
-  export type Result = {
+  export type Output = {
     id: string
   }
 }

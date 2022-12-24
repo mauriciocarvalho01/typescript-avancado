@@ -1,12 +1,12 @@
 export interface TokenGenarator {
-  generateToken: (params: TokenGenarator.Params) => Promise<TokenGenarator.Result>
+  generateToken: (params: TokenGenarator.Input) => Promise<TokenGenarator.Output>
 }
 
 export namespace TokenGenarator {
-  export type Params = {
+  export type Input = {
     key: string
     expirationInMs: number
   }
 
-  export type Result = string
+  export type Output = string
 }

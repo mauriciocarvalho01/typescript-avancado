@@ -6,7 +6,7 @@
 //   token?: string
 //   result = undefined
 //   callsCount = 0
-//   async loadUser (params: LoadGoogleUserApi.Params): Promise<LoadGoogleUserApi.Result> {
+//   async loadUser (params: LoadGoogleUserApi.Input): Promise<LoadGoogleUserApi.Output> {
 //     this.token = params.token
 //     this.callsCount++
 //     return this.result
@@ -26,7 +26,7 @@
 //     const loadGoogleUserApi = new LoadGoogleUserApiSpy()
 //     loadGoogleUserApi.result = undefined
 //     const sut = new GoogleAuthenticationUseCase(loadGoogleUserApi)
-//     const authResult = await sut.perform({ token: 'any_token' })
-//     expect(authResult).toEqual(new AuthenticationError())
+//     const authOutput = await sut.perform({ token: 'any_token' })
+//     expect(authOutput).toEqual(new AuthenticationError())
 //   })
 // })

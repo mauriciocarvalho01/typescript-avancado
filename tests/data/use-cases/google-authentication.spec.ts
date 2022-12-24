@@ -59,9 +59,9 @@ describe('GoogleAuthenticationUseCase', () => {
   it('Should return AuthenticationError when LoadGoogleUserApi returns undefined', async () => {
     googleApi.loadUser.mockResolvedValueOnce(undefined)
 
-    const authResult = await sut.perform({ token })
+    const authOutput = await sut.perform({ token })
 
-    expect(authResult).toEqual(new AuthenticationError())
+    expect(authOutput).toEqual(new AuthenticationError())
   })
 
   it('Should call LoadUserAccountRepository when LoadGoogleUserApi returns data', async () => {
@@ -97,9 +97,9 @@ describe('GoogleAuthenticationUseCase', () => {
   })
 
   it('Should returns an  AccessToken on success', async () => {
-    const authResult = await sut.perform({ token })
+    const authOutput = await sut.perform({ token })
 
-    expect(authResult).toEqual(new AccessToken('any_generated_token'))
+    expect(authOutput).toEqual(new AccessToken('any_generated_token'))
   })
 
   it('Should rethrow if LoadGoogleUserApi throws', async () => {

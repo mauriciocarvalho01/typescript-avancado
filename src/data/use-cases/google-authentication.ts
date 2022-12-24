@@ -11,7 +11,7 @@ export class GoogleAuthenticationUseCase implements GoogleAuthentication {
     private readonly userAccountRepository: LoadUserAccountRepository & SaveGoogleAccountRepository,
     private readonly crypto: TokenGenarator) { }
 
-  async perform (params: GoogleAuthentication.Params): Promise<GoogleAuthentication.Result> {
+  async perform (params: GoogleAuthentication.Input): Promise<GoogleAuthentication.Output> {
     const googleData = await this.googleApi.loadUser(params)
     if (googleData !== undefined) {
       const accountData = await this.userAccountRepository.load({ email: googleData.email })

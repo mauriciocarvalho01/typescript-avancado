@@ -46,6 +46,7 @@
     "node": "16.x"
   },
   "dependencies": {
+    "google-auth-library": "^8.7.0",
     "module-alias": "^2.2.2",
     "rimraf": "^3.0.2"
   }
