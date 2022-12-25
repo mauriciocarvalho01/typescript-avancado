@@ -9,6 +9,5 @@ API em NodeJs utilizando Typescript seguindo as melhores metodologias do mercado
 - Git
 - Docker
 - MongoDb
-- MongoDb
 - CI/CD
 - Swagger
