@@ -1,2 +1,2 @@
 export * from './google'
-export * from './google-client'
+export * from './provider-client'

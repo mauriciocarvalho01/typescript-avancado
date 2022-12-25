@@ -1,12 +1,12 @@
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
-import { GoogleApi, GoogleClient } from '@/infra/apis'
+import { GoogleApi, ProviderClient } from '@/infra/apis'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('GoogleApi', () => {
   let sut: GoogleApi
   let clientId: string
-  let googleClient: MockProxy<GoogleClient>
+  let googleClient: MockProxy<ProviderClient>
   let token: string
   let mockGoogleUser: LoadGoogleUserApi.Output
   beforeAll(() => {
