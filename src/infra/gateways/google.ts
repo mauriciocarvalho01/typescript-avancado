@@ -1,4 +1,4 @@
-import { ProviderClient } from '@/infra/apis'
+import { ProviderClient } from '@/infra/gateways'
 import { LoadGoogleUserApi } from '@/data/contracts/apis'
 
 export class GoogleApi implements LoadGoogleUserApi {
