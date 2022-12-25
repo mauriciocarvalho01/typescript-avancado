@@ -1,5 +1,5 @@
 import { ProviderClient } from '@/infra/gateways'
-import { LoadGoogleUserApi } from '@/data/contracts/apis'
+import { LoadGoogleUserApi } from '@/data/contracts/gateways'
 
 export class GoogleApi implements LoadGoogleUserApi {
   constructor (private readonly googleClient: ProviderClient, private readonly clientId: string) { }

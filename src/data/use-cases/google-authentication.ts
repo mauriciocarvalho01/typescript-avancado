@@ -1,4 +1,4 @@
-import { LoadGoogleUserApi } from '@/data/contracts/apis'
+import { LoadGoogleUserApi } from '@/data/contracts/gateways'
 import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'

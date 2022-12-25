@@ -1,5 +1,6 @@
-import { LoadGoogleUserApi } from '@/data/contracts/apis'
-import { GoogleApi, ProviderClient } from '@/infra/gateways'
+import { LoadGoogleUserApi } from '@/data/contracts/gateways'
+import { GoogleApi } from '@/infra/gateways/google'
+import { ProviderClient } from '@/infra/gateways'
 
 import { mock, MockProxy } from 'jest-mock-extended'
 

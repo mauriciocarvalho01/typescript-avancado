@@ -1,6 +1,6 @@
 import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
-import { LoadGoogleUserApi } from '@/data/contracts/apis'
+import { LoadGoogleUserApi } from '@/data/contracts/gateways'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
 import { TokenGenarator } from '@/data/contracts/crypto'
 import { AccessToken, GoogleAccount } from '@/domain/models'
