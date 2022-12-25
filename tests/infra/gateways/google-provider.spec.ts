@@ -4,16 +4,25 @@ import { OAuth2Client } from 'google-auth-library'
 jest.mock('google-auth-library')
 
 describe('GoogleProvider', () => {
+  let sut: GoogleProviderClient
+  let client: OAuth2Client
+  let fakeOAuth2Client: jest.Mocked<typeof client>
+  let clientId: string
+  let token: string
+  beforeAll(() => {
+    client = new OAuth2Client(clientId)
+    fakeOAuth2Client = client as jest.Mocked<typeof client>
+    clientId = 'any_client_id'
+    token = 'any_client_token'
+  })
+  beforeEach(() => {
+    sut = new GoogleProviderClient()
+  })
   describe('User Account', () => {
     it('Should calls lib method with correct params', async () => {
-      const client = new OAuth2Client('any_client_id')
-      const fakeOAuth2Client = client as jest.Mocked<typeof client>
-      const sut = new GoogleProviderClient()
-      await sut.verifyIdToken({
-        token: 'any_client_token',
-        clientId: 'any_client_id'
-      })
-      expect(fakeOAuth2Client.verifyIdToken).toHaveBeenCalledWith({ audience: 'any_client_id', idToken: 'any_client_token' })
+      await sut.verifyIdToken({ token, clientId })
+      expect(fakeOAuth2Client.verifyIdToken).toHaveBeenCalledWith({ audience: clientId, idToken: token })
+      expect
     })
   })
 })
