@@ -22,7 +22,13 @@ describe('GoogleProvider', () => {
     it('Should calls lib method with correct params', async () => {
       await sut.verifyIdToken({ token, clientId })
       expect(fakeOAuth2Client.verifyIdToken).toHaveBeenCalledWith({ audience: clientId, idToken: token })
-      expect
+      expect(fakeOAuth2Client.verifyIdToken).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should calls lib method with correct params', async () => {
+      await sut.verifyIdToken({ token, clientId })
+      expect(fakeOAuth2Client.verifyIdToken).toHaveBeenCalledWith({ audience: clientId, idToken: token })
+      expect(fakeOAuth2Client.verifyIdToken).toHaveBeenCalledTimes(1)
     })
   })
 })

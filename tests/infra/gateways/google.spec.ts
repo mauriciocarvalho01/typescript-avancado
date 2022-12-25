@@ -24,6 +24,7 @@ describe('GoogleApi', () => {
   it('should get google user by token', async () => {
     await sut.loadUser({ token })
     expect(googleClient.verifyIdToken).toHaveBeenCalledWith({ token, clientId })
+    expect(googleClient.verifyIdToken).toHaveBeenCalledTimes(1)
   })
 
   it('should return google user', async () => {
