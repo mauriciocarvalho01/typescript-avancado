@@ -7,6 +7,5 @@ export namespace TokenGenarator {
     key: string
     expirationInMs: number
   }
-
   export type Output = string
 }

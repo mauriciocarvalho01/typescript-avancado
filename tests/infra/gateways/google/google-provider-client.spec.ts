@@ -3,7 +3,7 @@ import { OAuth2Client } from 'google-auth-library'
 
 jest.mock('google-auth-library')
 
-describe('GoogleProvider', () => {
+describe('GoogleProviderClient', () => {
   let sut: GoogleProviderClient
   let client: OAuth2Client
   let fakeOAuth2Client: jest.Mocked<typeof client>
