@@ -22,12 +22,12 @@ describe('GoogleApi', () => {
   })
 
   it('should get google user by token', async () => {
-    await sut.loadUser({ token: 'any_client_token' })
+    await sut.loadUser({ token })
     expect(googleClient.verifyIdToken).toHaveBeenCalledWith({ token, clientId })
   })
 
   it('should return google user', async () => {
-    const googleUser = await sut.loadUser({ token: 'any_client_token' })
+    const googleUser = await sut.loadUser({ token })
     expect(googleUser).toEqual(mockGoogleUser)
   })
 })
