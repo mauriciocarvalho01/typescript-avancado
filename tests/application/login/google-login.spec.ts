@@ -2,7 +2,7 @@ import { GoogleAuthentication } from '@/domain/features'
 import { mock } from 'jest-mock-extended'
 
 describe('GoogleLoginController', () => {
-  it('Should return if token is empty ', async () => {
+  it('Should return 400 if token is empty ', async () => {
     const googleAuth = mock<GoogleAuthentication>()
     const sut = new GoogleLoginController(googleAuth)
 
@@ -15,7 +15,7 @@ describe('GoogleLoginController', () => {
     )
   })
 
-  it('Should return if token is null ', async () => {
+  it('Should return 400 if token is null ', async () => {
     const googleAuth = mock<GoogleAuthentication>()
     const sut = new GoogleLoginController(googleAuth)
 
@@ -28,7 +28,7 @@ describe('GoogleLoginController', () => {
     )
   })
 
-  it('Should return if token is undefined ', async () => {
+  it('Should return 400 if token is undefined ', async () => {
     const googleAuth = mock<GoogleAuthentication>()
     const sut = new GoogleLoginController(googleAuth)
 
