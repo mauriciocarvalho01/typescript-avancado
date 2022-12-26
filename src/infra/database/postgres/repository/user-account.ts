@@ -21,10 +21,14 @@ export class PgUserAccountRepository implements LoadUserAccountRepository {
 
   async saveWithGoogle (params: SaveGoogleAccountRepository.Input): Promise<void> {
     const pgUserRepository = this.dataSource.getRepository(PgUser)
-    await pgUserRepository.save({
-      email: params.email,
-      name: params.name,
-      googleId: params.googleId
-    })
+    if (params.id === undefined) {
+      await pgUserRepository.save({
+        email: params.email,
+        name: params.name,
+        googleId: params.googleId
+      })
+    } else {
+      await pgUserRepository.update({ id: parseInt(params.id) }, { name: params.name, googleId: params.googleId })
+    }
   }
 }
