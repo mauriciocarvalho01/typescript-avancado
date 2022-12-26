@@ -1,12 +1,21 @@
 import { GoogleAuthentication } from '@/domain/features'
-import { mock } from 'jest-mock-extended'
+import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('GoogleLoginController', () => {
-  it('Should return 400 if token is empty ', async () => {
-    const googleAuth = mock<GoogleAuthentication>()
-    const sut = new GoogleLoginController(googleAuth)
+  let sut: GoogleLoginController
+  let googleAuth: MockProxy<GoogleAuthentication>
 
+  beforeAll(() => {
+    googleAuth = mock()
+  })
+
+  beforeEach(() => {
+    sut = new GoogleLoginController(googleAuth)
+  })
+
+  it('Should return 400 if token is empty ', async () => {
     const httpResponse = await sut.handle({ token: '' })
+
     expect(httpResponse).toEqual(
       {
         statusCode: 400,
@@ -16,10 +25,8 @@ describe('GoogleLoginController', () => {
   })
 
   it('Should return 400 if token is null ', async () => {
-    const googleAuth = mock<GoogleAuthentication>()
-    const sut = new GoogleLoginController(googleAuth)
-
     const httpResponse = await sut.handle({ token: null })
+
     expect(httpResponse).toEqual(
       {
         statusCode: 400,
@@ -29,10 +36,8 @@ describe('GoogleLoginController', () => {
   })
 
   it('Should return 400 if token is undefined ', async () => {
-    const googleAuth = mock<GoogleAuthentication>()
-    const sut = new GoogleLoginController(googleAuth)
-
     const httpResponse = await sut.handle({ token: undefined })
+
     expect(httpResponse).toEqual(
       {
         statusCode: 400,
@@ -42,13 +47,21 @@ describe('GoogleLoginController', () => {
   })
 
   it('Should call GoogleAuthentication with correct params', async () => {
-    const googleAuth = mock<GoogleAuthentication>()
-    const sut = new GoogleLoginController(googleAuth)
-
     await sut.handle({ token: 'any_token' })
 
     expect(googleAuth.perform).toHaveBeenCalledWith({ token: 'any_token' })
     expect(googleAuth.perform).toHaveBeenCalledTimes(1)
+  })
+
+  it('Should return 400 if autheti', async () => {
+    const httpResponse = await sut.handle({ token: undefined })
+
+    expect(httpResponse).toEqual(
+      {
+        statusCode: 400,
+        data: new Error('The field token is required')
+      }
+    )
   })
 })
 
