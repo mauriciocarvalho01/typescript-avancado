@@ -1,6 +1,10 @@
 import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
+import { AccessToken } from '@/domain/models'
 import { mock, MockProxy } from 'jest-mock-extended'
+import { ServerError, RequiredFieldError } from '@/application/errors'
+import { GoogleLoginController } from '@/application/controllers'
+import { UnauthorizedError } from '@/application/errors/http'
 
 describe('GoogleLoginController', () => {
   let sut: GoogleLoginController
@@ -8,6 +12,7 @@ describe('GoogleLoginController', () => {
 
   beforeAll(() => {
     googleAuth = mock()
+    googleAuth.perform.mockResolvedValue(new AccessToken('any_value'))
   })
 
   beforeEach(() => {
@@ -20,9 +25,8 @@ describe('GoogleLoginController', () => {
     expect(httpResponse).toEqual(
       {
         statusCode: 400,
-        data: new Error('The field token is required')
-      }
-    )
+        data: new RequiredFieldError('token')
+      })
   })
 
   it('Should return 400 if token is null ', async () => {
@@ -31,7 +35,7 @@ describe('GoogleLoginController', () => {
     expect(httpResponse).toEqual(
       {
         statusCode: 400,
-        data: new Error('The field token is required')
+        data: new RequiredFieldError('token')
       }
     )
   })
@@ -42,7 +46,7 @@ describe('GoogleLoginController', () => {
     expect(httpResponse).toEqual(
       {
         statusCode: 400,
-        data: new Error('The field token is required')
+        data: new RequiredFieldError('token')
       }
     )
   })
@@ -54,49 +58,41 @@ describe('GoogleLoginController', () => {
     expect(googleAuth.perform).toHaveBeenCalledTimes(1)
   })
 
-  it('Should return 400 if authentication fails', async () => {
+  it('Should return 401 if authentication fails', async () => {
     googleAuth.perform.mockResolvedValueOnce(new AuthenticationError())
     const httpResponse = await sut.handle({ token: 'any_token' })
 
     expect(httpResponse).toEqual(
       {
         statusCode: 401,
-        data: new AuthenticationError()
+        data: new UnauthorizedError()
       }
     )
   })
 
-  it('Should return 200 if authentication fails', async () => {
-    googleAuth.perform.mockResolvedValueOnce(new AuthenticationError())
+  it('Should return 200 if authentication return success', async () => {
     const httpResponse = await sut.handle({ token: 'any_token' })
 
     expect(httpResponse).toEqual(
       {
-        statusCode: 401,
-        data: new AuthenticationError()
+        statusCode: 200,
+        data: {
+          accessToken: 'any_value'
+        }
+      }
+    )
+  })
+
+  it('Should return 500 if authentication throws', async () => {
+    const error = new Error('infra_error')
+    googleAuth.perform.mockRejectedValueOnce(error)
+    const httpResponse = await sut.handle({ token: 'any_token' })
+
+    expect(httpResponse).toEqual(
+      {
+        statusCode: 500,
+        data: new ServerError(error)
       }
     )
   })
 })
-
-type httpResponse = {
-  statusCode: number
-  data: any
-}
-
-class GoogleLoginController {
-  constructor (private readonly googleAuth: GoogleAuthentication) { }
-  async handle (httpRequest: any): Promise<httpResponse> {
-    if (httpRequest.token === '' || httpRequest.token === undefined || httpRequest.token === null) {
-      return {
-        statusCode: 400,
-        data: new Error('The field token is required')
-      }
-    }
-    const result = await this.googleAuth.perform({ token: httpRequest.token })
-    return {
-      statusCode: 401,
-      data: result
-    }
-  }
-}
