@@ -1,13 +1,21 @@
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
 import { PgUser } from '@/infra/database/postgres/entities'
 
-import { DataSource } from 'typeorm'
+import { DataSource, Repository } from 'typeorm'
 
-export class PgUserAccountRepository implements LoadUserAccountRepository {
-  constructor (private readonly dataSource: DataSource) { }
-  async load (params: LoadUserAccountRepository.Input): Promise<LoadUserAccountRepository.Output> {
-    const pgUserRepository = this.dataSource.getRepository(PgUser)
-    const pgUser = await pgUserRepository.findOne({
+type LoadParams = LoadUserAccountRepository.Input
+type LoadResult = LoadUserAccountRepository.Output
+type SaveParams = SaveGoogleAccountRepository.Input
+type SaveResult = SaveGoogleAccountRepository.Output
+
+export class PgUserAccountRepository implements LoadUserAccountRepository, SaveGoogleAccountRepository {
+  private readonly pgUserRepository: Repository<PgUser>
+  constructor (private readonly dataSource: DataSource) {
+    this.pgUserRepository = this.dataSource.getRepository(PgUser)
+  }
+
+  async load (params: LoadParams): Promise<LoadResult> {
+    const pgUser = await this.pgUserRepository.findOne({
       where:
         { email: params.email }
     })
@@ -19,16 +27,19 @@ export class PgUserAccountRepository implements LoadUserAccountRepository {
     }
   }
 
-  async saveWithGoogle (params: SaveGoogleAccountRepository.Input): Promise<void> {
-    const pgUserRepository = this.dataSource.getRepository(PgUser)
+  async saveWithGoogle (params: SaveParams): Promise<SaveResult> {
+    let id: string
     if (params.id === undefined) {
-      await pgUserRepository.save({
+      const pgUser = await this.pgUserRepository.save({
         email: params.email,
         name: params.name,
         googleId: params.googleId
       })
+      id = pgUser.id.toString()
     } else {
-      await pgUserRepository.update({ id: parseInt(params.id) }, { name: params.name, googleId: params.googleId })
+      id = params.id
+      await this.pgUserRepository.update({ id: parseInt(params.id) }, { name: params.name, googleId: params.googleId })
     }
+    return { id }
   }
 }
