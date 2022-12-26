@@ -3,13 +3,13 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
 import { AccessToken, GoogleAccount } from '@/domain/models'
-import { TokenGenarator } from '@/data/contracts/crypto'
+import { TokenGenerator } from '@/data/contracts/crypto'
 
 export class GoogleAuthenticationUseCase implements GoogleAuthentication {
   constructor (
     private readonly googleApi: LoadGoogleUserApi,
     private readonly userAccountRepository: LoadUserAccountRepository & SaveGoogleAccountRepository,
-    private readonly crypto: TokenGenarator) { }
+    private readonly crypto: TokenGenerator) { }
 
   async perform (params: GoogleAuthentication.Input): Promise<GoogleAuthentication.Output> {
     const googleData = await this.googleApi.loadUser(params)

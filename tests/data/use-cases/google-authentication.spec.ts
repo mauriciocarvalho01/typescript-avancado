@@ -2,7 +2,7 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthenticationUseCase } from '@/data/use-cases/google-authentication'
 import { LoadGoogleUserApi } from '@/data/contracts/gateways'
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
-import { TokenGenarator } from '@/data/contracts/crypto'
+import { TokenGenerator } from '@/data/contracts/crypto'
 import { AccessToken, GoogleAccount } from '@/domain/models'
 
 import { mock, MockProxy } from 'jest-mock-extended'
@@ -24,7 +24,7 @@ import { mock, MockProxy } from 'jest-mock-extended'
 jest.mock('@/domain/models/google-account')
 
 describe('GoogleAuthenticationUseCase', () => {
-  let crypto: MockProxy<TokenGenarator>
+  let crypto: MockProxy<TokenGenerator>
   let googleApi: MockProxy<LoadGoogleUserApi>
   let userAccountRepository: MockProxy<LoadUserAccountRepository & SaveGoogleAccountRepository>
   let sut: GoogleAuthenticationUseCase
