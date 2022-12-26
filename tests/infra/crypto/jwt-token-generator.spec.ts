@@ -33,11 +33,20 @@ describe('JwtTokenGenerator', () => {
     await sut.generateToken({ key: 'any_key', expirationInMs })
 
     expect(fakeJwt.sign).toHaveBeenCalledWith({ key }, secret, { expiresIn: 1 })
+    expect(fakeJwt.sign).toHaveBeenCalledTimes(1)
   })
 
   it('Should return generateToken a token', async () => {
     const token = await sut.generateToken({ key: 'any_key', expirationInMs })
 
     expect(token).toBe(mockToken)
+  })
+
+  it('Should rethrow if sign throws', async () => {
+    fakeJwt.sign.mockImplementationOnce(() => { throw new Error('token_error') })
+
+    const promise = sut.generateToken({ key: 'any_key', expirationInMs })
+
+    await expect(promise).rejects.toThrow(new Error('token_error'))
   })
 })
