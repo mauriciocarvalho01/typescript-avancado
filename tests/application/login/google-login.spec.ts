@@ -1,6 +1,10 @@
+import { GoogleAuthentication } from '@/domain/features'
+import { mock } from 'jest-mock-extended'
+
 describe('GoogleLoginController', () => {
   it('Should return if token is empty ', async () => {
-    const sut = new GoogleLoginController()
+    const googleAuth = mock<GoogleAuthentication>()
+    const sut = new GoogleLoginController(googleAuth)
 
     const httpResponse = await sut.handle({ token: '' })
     expect(httpResponse).toEqual(
@@ -12,7 +16,8 @@ describe('GoogleLoginController', () => {
   })
 
   it('Should return if token is null ', async () => {
-    const sut = new GoogleLoginController()
+    const googleAuth = mock<GoogleAuthentication>()
+    const sut = new GoogleLoginController(googleAuth)
 
     const httpResponse = await sut.handle({ token: null })
     expect(httpResponse).toEqual(
@@ -24,7 +29,8 @@ describe('GoogleLoginController', () => {
   })
 
   it('Should return if token is undefined ', async () => {
-    const sut = new GoogleLoginController()
+    const googleAuth = mock<GoogleAuthentication>()
+    const sut = new GoogleLoginController(googleAuth)
 
     const httpResponse = await sut.handle({ token: undefined })
     expect(httpResponse).toEqual(
@@ -35,16 +41,14 @@ describe('GoogleLoginController', () => {
     )
   })
 
-  it('Should call GoogleAureturn if token is null ', async () => {
-    const sut = new GoogleLoginController()
+  it('Should call GoogleAuthentication with correct params', async () => {
+    const googleAuth = mock<GoogleAuthentication>()
+    const sut = new GoogleLoginController(googleAuth)
 
-    const httpResponse = await sut.handle({ token: null })
-    expect(httpResponse).toEqual(
-      {
-        statusCode: 400,
-        data: new Error('The field token is required')
-      }
-    )
+    await sut.handle({ token: 'any_token' })
+
+    expect(googleAuth.perform).toHaveBeenCalledWith({ token: 'any_token' })
+    expect(googleAuth.perform).toHaveBeenCalledTimes(1)
   })
 })
 
@@ -54,7 +58,9 @@ type httpResponse = {
 }
 
 class GoogleLoginController {
+  constructor (private readonly googleAuth: GoogleAuthentication) { }
   async handle (httpRequest: any): Promise<httpResponse> {
+    await this.googleAuth.perform({ token: httpRequest.token })
     return {
       statusCode: 400,
       data: new Error('The field token is required')
