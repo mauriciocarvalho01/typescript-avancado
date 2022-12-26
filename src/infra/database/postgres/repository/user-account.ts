@@ -1,4 +1,4 @@
-import { LoadUserAccountRepository } from '@/data/contracts/repository'
+import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
 import { PgUser } from '@/infra/database/postgres/entities'
 
 import { DataSource } from 'typeorm'
@@ -17,5 +17,14 @@ export class PgUserAccountRepository implements LoadUserAccountRepository {
         name: pgUser.name ?? undefined
       }
     }
+  }
+
+  async saveWithGoogle (params: SaveGoogleAccountRepository.Input): Promise<void> {
+    const pgUserRepository = this.dataSource.getRepository(PgUser)
+    await pgUserRepository.save({
+      email: params.email,
+      name: params.name,
+      googleId: params.googleId
+    })
   }
 }

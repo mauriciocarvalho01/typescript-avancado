@@ -35,11 +35,20 @@ describe('PgUserAccountRepository', () => {
 
       expect(account).toBeUndefined()
     })
+  })
 
-    it('saveWithFacebook', async () => {
-      const account = await sut.load({ email: 'any_email' })
+  describe('saveWithGoogle', () => {
+    it('Should create an account if id is undefined', async () => {
+      await sut.saveWithGoogle({ email: 'any_email', name: 'any_name', googleId: 'any_google_id' })
+      const pgUser = await pgUserRepository.findOne({ where: { email: 'any_email' } })
+      expect(pgUser?.id).toBe(1)
+    })
 
-      expect(account).toBeUndefined()
+    it('Should update an account if id is defined', async () => {
+      const pgUser = await pgUserRepository.findOne({ where: { email: 'any_email' } })
+      await sut.saveWithGoogle({ email: 'any_email', name: 'any_name', googleId: 'any_google_id' })
+
+      expect(pgUser?.id).toBe(1)
     })
   })
 })
