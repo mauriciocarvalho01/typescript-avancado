@@ -27,6 +27,7 @@
   "homepage": "https://github.com/mauriciocarvalho01/typescript-avancado#readme",
   "devDependencies": {
     "@types/jest": "^29.2.4",
+    "@types/jsonwebtoken": "^9.0.0",
     "@types/module-alias": "^2.0.1",
     "@types/node": "^18.11.17",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -47,6 +48,7 @@
   },
   "dependencies": {
     "google-auth-library": "^8.7.0",
+    "jsonwebtoken": "^9.0.0",
     "module-alias": "^2.2.2",
     "rimraf": "^3.0.2"
   }
