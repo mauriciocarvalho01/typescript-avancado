@@ -16,7 +16,7 @@ describe('GoogleProviderClient', () => {
     clientId = 'any_client_id'
     token = 'any_client_token'
     email = 'any_client_email'
-    fakeOAuth2Client.verifyIdToken.mockResolvedValue(email as never)
+    fakeOAuth2Client.verifyIdToken.mockImplementation(() => email)
   })
   beforeEach(() => {
     sut = new GoogleProviderClient()
@@ -35,7 +35,7 @@ describe('GoogleProviderClient', () => {
     })
 
     it('Should rethrow if verifyIdToken throws', async () => {
-      fakeOAuth2Client.verifyIdToken.mockRejectedValueOnce(new Error('OAuth2Client Error') as never)
+      fakeOAuth2Client.verifyIdToken.mockImplementationOnce(() => { throw new Error('OAuth2Client Error') })
       const promise = sut.verifyIdToken({ token, clientId })
       await expect(promise).rejects.toThrow(new Error('OAuth2Client Error') as never)
       expect(fakeOAuth2Client.verifyIdToken).toHaveBeenCalledTimes(1)
