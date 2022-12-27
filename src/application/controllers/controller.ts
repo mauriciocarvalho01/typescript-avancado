@@ -1,24 +1,26 @@
-import { HttpHelper, HttpResponse, HttpRequest, SuccessResponse } from '@/application/helpers'
-import { ValidationComposite, ValidationBuilder } from '@/application/validation'
-
-type HttpResponseModel = Error | SuccessResponse
+import { HttpHelper, HttpResponse } from '@/application/helpers'
+import { ValidationComposite, Validator } from '@/application/validation'
 
 export abstract class Controller {
   httpHelper: HttpHelper = new HttpHelper()
-  abstract perform (HttpRequest: any): Promise<HttpResponse<HttpResponseModel>>
-  async handle (HttpRequest: any): Promise<HttpResponse<HttpResponseModel>> {
+  abstract perform (HttpRequest: any): Promise<HttpResponse>
+
+  buildValidators (HttpRequest: any): Validator[] {
+    return []
+  }
+
+  async handle (HttpRequest: any): Promise<HttpResponse> {
+    const error = this.validate(HttpRequest)
+    if (error !== undefined) return this.httpHelper.badRequest(error)
     try {
-      const error = this.validate(HttpRequest)
-      if (error !== undefined) return this.httpHelper.badRequest(error)
-      await this.perform({ token: HttpRequest.token })
+      return await this.perform(HttpRequest)
     } catch (error) {
       return this.httpHelper.serverError(error as Error)
     }
   }
 
-  private validate (httpRequest: HttpRequest): Error | undefined {
-    return new ValidationComposite([
-      ...ValidationBuilder.of({ value: httpRequest.token, fieldName: 'token' }).required().build()
-    ]).validate()
+  private validate (httpRequest: any): Error | undefined {
+    const validators = this.buildValidators(httpRequest)
+    return new ValidationComposite(validators).validate()
   }
 }
