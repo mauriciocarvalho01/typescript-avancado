@@ -1,7 +1,7 @@
 import { GoogleAuthentication } from '@/domain/features'
 import { HttpHelper, httpResponse } from '@/application/helpers'
 import { AccessToken } from '@/domain/models'
-import { RequiredFieldError } from '@/application/errors'
+import { RequiredStringValidator } from '@/application/validation'
 
 type httpRequest = {
   token: string
@@ -28,8 +28,7 @@ export class GoogleLoginController {
   }
 
   private validate (httpRequest: httpRequest): Error | undefined {
-    if (httpRequest.token === '' || httpRequest.token === undefined || httpRequest.token === null) {
-      return new RequiredFieldError('token')
-    }
+    const validator = new RequiredStringValidator(httpRequest.token, 'token')
+    return validator.validate()
   }
 }
