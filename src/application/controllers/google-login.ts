@@ -1,7 +1,7 @@
 import { GoogleAuthentication } from '@/domain/features'
 import { HttpHelper, httpResponse } from '@/application/helpers'
 import { AccessToken } from '@/domain/models'
-import { RequiredFieldError } from '@/application/errors/http'
+import { RequiredFieldError } from '@/application/errors'
 
 type httpRequest = {
   token: string
