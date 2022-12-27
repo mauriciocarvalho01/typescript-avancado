@@ -2,64 +2,57 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
 import { AccessToken } from '@/domain/models'
 import { mock, MockProxy } from 'jest-mock-extended'
-import { ServerError, RequiredFieldError, UnauthorizedError } from '@/application/errors'
+import { ServerError, UnauthorizedError } from '@/application/errors'
 import { GoogleLoginController } from '@/application/controllers'
+import { RequiredStringValidator } from '@/application/validation'
+
+jest.mock('@/application/validation/required-string')
 
 describe('GoogleLoginController', () => {
   let sut: GoogleLoginController
   let googleAuth: MockProxy<GoogleAuthentication>
-
+  let token: string
   beforeAll(() => {
     googleAuth = mock()
     googleAuth.perform.mockResolvedValue(new AccessToken('any_value'))
+    token = 'any_token'
   })
 
   beforeEach(() => {
     sut = new GoogleLoginController(googleAuth)
   })
 
-  it('Should return 400 if token is empty ', async () => {
-    const httpResponse = await sut.handle({ token: '' })
+  it('Should return 400 if validation fails', async () => {
+    const error = new Error('validation_error')
+    const requiredStringValidatorSpy = jest.fn().mockImplementation(() => {
+      return {
+        validate: jest.fn().mockReturnValueOnce(error)
+      }
+    })
+
+    jest.mocked(RequiredStringValidator).mockImplementationOnce(requiredStringValidatorSpy)
+
+    const httpResponse = await sut.handle({ token })
+
+    expect(RequiredStringValidator).toHaveBeenCalledWith('any_token', 'token')
 
     expect(httpResponse).toEqual(
       {
         statusCode: 400,
-        data: new RequiredFieldError('token')
+        data: error
       })
-  })
-
-  it('Should return 400 if token is null ', async () => {
-    const httpResponse = await sut.handle({ token: null as any })
-
-    expect(httpResponse).toEqual(
-      {
-        statusCode: 400,
-        data: new RequiredFieldError('token')
-      }
-    )
-  })
-
-  it('Should return 400 if token is undefined ', async () => {
-    const httpResponse = await sut.handle({ token: undefined as any })
-
-    expect(httpResponse).toEqual(
-      {
-        statusCode: 400,
-        data: new RequiredFieldError('token')
-      }
-    )
   })
 
   it('Should call GoogleAuthentication with correct params', async () => {
     await sut.handle({ token: 'any_token' })
 
-    expect(googleAuth.perform).toHaveBeenCalledWith({ token: 'any_token' })
+    expect(googleAuth.perform).toHaveBeenCalledWith({ token })
     expect(googleAuth.perform).toHaveBeenCalledTimes(1)
   })
 
   it('Should return 401 if authentication fails', async () => {
     googleAuth.perform.mockResolvedValueOnce(new AuthenticationError())
-    const httpResponse = await sut.handle({ token: 'any_token' })
+    const httpResponse = await sut.handle({ token })
 
     expect(httpResponse).toEqual(
       {
@@ -70,7 +63,7 @@ describe('GoogleLoginController', () => {
   })
 
   it('Should return 200 if authentication return success', async () => {
-    const httpResponse = await sut.handle({ token: 'any_token' })
+    const httpResponse = await sut.handle({ token })
 
     expect(httpResponse).toEqual(
       {
@@ -85,7 +78,7 @@ describe('GoogleLoginController', () => {
   it('Should return 500 if authentication throws', async () => {
     const error = new Error('infra_error')
     googleAuth.perform.mockRejectedValueOnce(error)
-    const httpResponse = await sut.handle({ token: 'any_token' })
+    const httpResponse = await sut.handle({ token })
 
     expect(httpResponse).toEqual(
       {
