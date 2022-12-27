@@ -1,5 +1,12 @@
 import { ServerError, UnauthorizedError } from '@/application/errors'
 
+export type httpRequest = {
+  token: string
+}
+export type SuccessResponse = {
+  accessToken: string
+}
+
 export type httpResponse<T = any> = {
   statusCode: number
   data: T
