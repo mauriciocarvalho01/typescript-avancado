@@ -5,8 +5,9 @@ import { mock, MockProxy } from 'jest-mock-extended'
 import { ServerError, UnauthorizedError } from '@/application/errors'
 import { GoogleLoginController } from '@/application/controllers'
 import { RequiredStringValidator } from '@/application/validation'
+import { ValidationComposite } from '@/application/validation/composite'
 
-jest.mock('@/application/validation/required-string')
+jest.mock('@/application/validation/composite')
 
 describe('GoogleLoginController', () => {
   let sut: GoogleLoginController
@@ -24,17 +25,19 @@ describe('GoogleLoginController', () => {
 
   it('Should return 400 if validation fails', async () => {
     const error = new Error('validation_error')
-    const requiredStringValidatorSpy = jest.fn().mockImplementation(() => {
+    const ValidationCompositeSpy = jest.fn().mockImplementation(() => {
       return {
         validate: jest.fn().mockReturnValueOnce(error)
       }
     })
 
-    jest.mocked(RequiredStringValidator).mockImplementationOnce(requiredStringValidatorSpy)
+    jest.mocked(ValidationComposite).mockImplementationOnce(ValidationCompositeSpy)
 
     const httpResponse = await sut.handle({ token })
 
-    expect(RequiredStringValidator).toHaveBeenCalledWith('any_token', 'token')
+    expect(ValidationComposite).toHaveBeenCalledWith([
+      new RequiredStringValidator('any_token', 'token')
+    ])
 
     expect(httpResponse).toEqual(
       {
