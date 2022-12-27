@@ -12,7 +12,8 @@
     "test:watch": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
     "test:coverage": "npm test -- --coverage",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:external-api": "npm test -- -c ./jest.integration.config.js ./tests/external/external-api.test.ts"
   },
   "repository": {
     "type": "git",
