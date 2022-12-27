@@ -3,9 +3,18 @@ import { badRequest, httpResponse, serverError, unauthorized, ok } from '@/appli
 import { AccessToken } from '@/domain/models'
 import { RequiredFieldError } from '@/application/errors/http'
 
+type httpRequest = {
+  token: string | undefined | null
+}
+type SuccessResponse = {
+  accessToken: string
+}
+
+type HttpResponseModel = Error | SuccessResponse
+
 export class GoogleLoginController {
   constructor (private readonly googleAuth: GoogleAuthentication) { }
-  async handle (httpRequest: any): Promise<httpResponse> {
+  async handle (httpRequest: httpRequest): Promise<httpResponse<HttpResponseModel>> {
     try {
       if (httpRequest.token === '' || httpRequest.token === undefined || httpRequest.token === null) {
         return badRequest(new RequiredFieldError('token'))
