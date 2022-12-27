@@ -5,22 +5,24 @@ export type httpResponse<T = any> = {
   data: T
 }
 
-export const ok = <T = any>(data: T): httpResponse<T> => ({
-  statusCode: 200,
-  data
-})
+export class HttpHelper {
+  ok = <T = any>(data: T): httpResponse<T> => ({
+    statusCode: 200,
+    data
+  })
 
-export const badRequest = (error: Error): httpResponse<Error> => ({
-  statusCode: 400,
-  data: error
-})
+  badRequest = (error: Error): httpResponse<Error> => ({
+    statusCode: 400,
+    data: error
+  })
 
-export const unauthorized = (): httpResponse<Error> => ({
-  statusCode: 401,
-  data: new UnauthorizedError()
-})
+  unauthorized = (): httpResponse<Error> => ({
+    statusCode: 401,
+    data: new UnauthorizedError()
+  })
 
-export const serverError = (error: Error): httpResponse<Error> => ({
-  statusCode: 500,
-  data: new ServerError(error)
-})
+  serverError = (error: Error): httpResponse<Error> => ({
+    statusCode: 500,
+    data: new ServerError(error)
+  })
+}

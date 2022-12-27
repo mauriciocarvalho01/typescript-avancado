@@ -2,9 +2,8 @@ import { AuthenticationError } from '@/domain/errors'
 import { GoogleAuthentication } from '@/domain/features'
 import { AccessToken } from '@/domain/models'
 import { mock, MockProxy } from 'jest-mock-extended'
-import { ServerError, RequiredFieldError } from '@/application/errors'
+import { ServerError, RequiredFieldError, UnauthorizedError } from '@/application/errors'
 import { GoogleLoginController } from '@/application/controllers'
-import { UnauthorizedError } from '@/application/errors/http'
 
 describe('GoogleLoginController', () => {
   let sut: GoogleLoginController
