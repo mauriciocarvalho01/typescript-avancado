@@ -50,6 +50,8 @@
     "node": "16.x"
   },
   "dependencies": {
+    "@types/dotenv": "^8.2.0",
+    "dotenv": "^16.0.3",
     "google-auth-library": "^8.7.0",
     "jsonwebtoken": "^9.0.0",
     "module-alias": "^2.2.2",
