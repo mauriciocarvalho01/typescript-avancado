@@ -44,4 +44,11 @@ describe('GoogleApi', () => {
       name: 'Mauricio Carvalho'
     })
   })
+
+  it('Should rethrow if GoogleClient throws', async () => {
+    googleClient.verifyIdToken.mockReset().mockImplementationOnce(() => { throw new Error('Client Error') })
+    const googleUser = await sut.loadUser({ token })
+    expect(googleUser).toBeUndefined()
+    expect(googleClient.verifyIdToken).toHaveBeenCalledTimes(1)
+  })
 })

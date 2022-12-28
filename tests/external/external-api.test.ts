@@ -2,10 +2,11 @@ import { GoogleApi, GoogleProviderClient } from '@/infra/gateways/google'
 import { Environments } from '@/main/config/environments'
 
 describe('GoogleApi', () => {
-  const env = Environments.instance.getEnvironments()
-  console.log(env)
+  let env: any
   let token: string
   beforeAll(() => {
+    jest.clearAllMocks()
+    env = Environments.instance.getEnvironments()
     token = env.googleClientToken
   })
   it('Should return a Google User if token is valid', async () => {
@@ -17,5 +18,13 @@ describe('GoogleApi', () => {
       email: 'developer.mauricio1@gmail.com',
       name: 'Mauricio Carvalho'
     })
+  })
+
+  it('Should return undefined User if token is invalid', async () => {
+    const googleProviderClient = new GoogleProviderClient()
+    const sut = new GoogleApi(googleProviderClient, env.googleClientId)
+    token = 'any_invalid_token'
+    const googleUser = await sut.loadUser({ token })
+    expect(googleUser).toBeUndefined()
   })
 })

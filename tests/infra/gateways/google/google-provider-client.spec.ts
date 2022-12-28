@@ -37,7 +37,7 @@ describe('GoogleProviderClient', () => {
     it('Should rethrow if verifyIdToken throws', async () => {
       fakeOAuth2Client.verifyIdToken.mockImplementationOnce(() => { throw new Error('OAuth2Client Error') })
       const promise = sut.verifyIdToken({ token, clientId })
-      await expect(promise).rejects.toThrow(new Error('OAuth2Client Error') as never)
+      await expect(promise).rejects.toThrow(new Error('OAuth2Client Error'))
       expect(fakeOAuth2Client.verifyIdToken).toHaveBeenCalledTimes(1)
     })
   })
