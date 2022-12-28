@@ -11,4 +11,11 @@ export namespace LoadGoogleUserApi {
     name: string
     email: string
   }
+  export type Payload = {
+    payload: {
+      sub: string
+      name: string
+      email: string
+    }
+  }
 }
