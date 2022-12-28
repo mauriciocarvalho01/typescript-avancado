@@ -1,5 +1,5 @@
 import { GoogleApi, GoogleProviderClient } from '@/infra/gateways/google'
-import { Environments } from '@/environments'
+import { Environments } from '@/main/config/environments'
 
 describe('GoogleApi', () => {
   const env = Environments.instance.getEnvironments()
