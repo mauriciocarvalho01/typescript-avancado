@@ -32,12 +32,14 @@ describe('GoogleApi', () => {
 
   it('should get google user by token', async () => {
     await sut.loadUser({ token })
+
     expect(googleClient.verifyIdToken).toHaveBeenCalledWith({ token, clientId })
     expect(googleClient.verifyIdToken).toHaveBeenCalledTimes(1)
   })
 
   it('should return google user', async () => {
     const googleUser = await sut.loadUser({ token })
+
     expect(googleUser).toEqual({
       googleId: '115416733142652538327',
       email: 'developer.mauricio1@gmail.com',
@@ -45,9 +47,11 @@ describe('GoogleApi', () => {
     })
   })
 
-  it('Should rethrow if GoogleClient throws', async () => {
-    googleClient.verifyIdToken.mockReset().mockImplementationOnce(() => { throw new Error('Client Error') })
+  it('Should return undefined if GoogleClient throws', async () => {
+    googleClient.verifyIdToken.mockReset().mockRejectedValueOnce(new Error('Client Error'))
+
     const googleUser = await sut.loadUser({ token })
+
     expect(googleUser).toBeUndefined()
     expect(googleClient.verifyIdToken).toHaveBeenCalledTimes(1)
   })
