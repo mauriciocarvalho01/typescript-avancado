@@ -9,18 +9,18 @@ describe('ExpressRouter', () => {
   let controller: MockProxy<Controller>
   let sut: ExpressRouter
   beforeEach(() => {
-    req = getMockReq({ body: { any: 'any' } })
+    req = getMockReq({ body: { data: 'any_data' } })
     res = getMockRes().res
     controller = mock()
     controller.handle.mockResolvedValue({
       statusCode: 200,
-      data: { any: 'any' }
+      data: { data: 'any_data' }
     })
     sut = new ExpressRouter(controller)
   })
   it('should call handle with correct request', async () => {
     await sut.adapter(req, res)
-    expect(controller.handle).toHaveBeenCalledWith({ any: 'any' })
+    expect(controller.handle).toHaveBeenCalledWith({ data: 'any_data' })
     expect(controller.handle).toHaveBeenCalledTimes(1)
   })
 
@@ -35,7 +35,31 @@ describe('ExpressRouter', () => {
     await sut.adapter(req, res)
     expect(res.status).toHaveBeenCalledWith(200)
     expect(res.status).toHaveBeenCalledTimes(1)
-    expect(res.json).toHaveBeenCalledWith({ any: 'any' })
+    expect(res.json).toHaveBeenCalledWith({ data: 'any_data' })
+    expect(res.json).toHaveBeenCalledTimes(1)
+  })
+
+  it('should response with 400 and valid error', async () => {
+    controller.handle.mockResolvedValueOnce({
+      statusCode: 400,
+      data: new Error('any_error')
+    })
+    await sut.adapter(req, res)
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.status).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledWith({ error: 'any_error' })
+    expect(res.json).toHaveBeenCalledTimes(1)
+  })
+
+  it('should response with 500 and valid error', async () => {
+    controller.handle.mockResolvedValueOnce({
+      statusCode: 500,
+      data: new Error('any_error')
+    })
+    await sut.adapter(req, res)
+    expect(res.status).toHaveBeenCalledWith(500)
+    expect(res.status).toHaveBeenCalledTimes(1)
+    expect(res.json).toHaveBeenCalledWith({ error: 'any_error' })
     expect(res.json).toHaveBeenCalledTimes(1)
   })
 })
@@ -44,6 +68,10 @@ export class ExpressRouter {
   constructor (private readonly controller: Controller) { }
   async adapter (req: Request, res: Response): Promise<void> {
     const httpResponse = await this.controller.handle({ ...req.body })
-    res.status(200).json(httpResponse.data)
+    if (httpResponse.statusCode === 200) {
+      res.status(httpResponse.statusCode).json(httpResponse.data)
+    } else {
+      res.status(httpResponse.statusCode).json({ error: httpResponse.data.message })
+    }
   }
 }
