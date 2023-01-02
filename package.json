@@ -54,6 +54,7 @@
     "node": "16.x"
   },
   "dependencies": {
+    "@jest-mock/express": "^2.0.1",
     "@types/dotenv": "^8.2.0",
     "dotenv": "^16.0.3",
     "google-auth-library": "^8.7.0",
