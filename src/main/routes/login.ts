@@ -3,5 +3,5 @@ import { Router } from 'express'
 import { makeGoogleLoginController } from '@/main/factories/controlles'
 
 export default (router: Router): void => {
-  router.post('/api/login/google', adapt(makeGoogleLoginController()))
+  router.post('/login/google', adapt(makeGoogleLoginController()))
 }
