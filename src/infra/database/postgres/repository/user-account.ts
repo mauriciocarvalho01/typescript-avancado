@@ -14,10 +14,10 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveG
     this.pgUserRepository = this.dataSource.getRepository(PgUser)
   }
 
-  async load (params: LoadParams): Promise<LoadResult> {
+  async load ({ email }: LoadParams): Promise<LoadResult> {
     const pgUser = await this.pgUserRepository.findOne({
       where:
-        { email: params.email }
+        { email }
     })
     if (pgUser !== undefined && pgUser !== null) {
       return {
@@ -27,19 +27,15 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveG
     }
   }
 
-  async saveWithGoogle (params: SaveParams): Promise<SaveResult> {
-    let id: string
-    if (params.id === undefined) {
-      const pgUser = await this.pgUserRepository.save({
-        email: params.email,
-        name: params.name,
-        googleId: params.googleId
-      })
-      id = pgUser.id.toString()
+  async saveWithGoogle ({ id, email, name, googleId }: SaveParams): Promise<SaveResult> {
+    let resultId: string
+    if (id === undefined) {
+      const pgUser = await this.pgUserRepository.save({ email, name, googleId })
+      resultId = pgUser.id.toString()
     } else {
-      id = params.id
-      await this.pgUserRepository.update({ id: parseInt(params.id) }, { name: params.name, googleId: params.googleId })
+      resultId = id
+      await this.pgUserRepository.update({ id: parseInt(id) }, { name, googleId })
     }
-    return { id }
+    return { id: resultId }
   }
 }

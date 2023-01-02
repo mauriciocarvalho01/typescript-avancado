@@ -6,8 +6,8 @@ export class ValidationBuilder {
     private readonly fieldName: string,
     private readonly validators: Validator[] = []) { }
 
-  static of (params: Schema): ValidationBuilder {
-    return new ValidationBuilder(params.value, params.fieldName)
+  static of ({ value, fieldName }: Schema): ValidationBuilder {
+    return new ValidationBuilder(value, fieldName)
   }
 
   required (): ValidationBuilder {

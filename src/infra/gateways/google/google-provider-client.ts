@@ -1,12 +1,14 @@
 import { ProviderClient } from '@/infra/gateways'
 import { OAuth2Client } from 'google-auth-library'
 
+type Params = ProviderClient.Input
+
 export class GoogleProviderClient implements ProviderClient {
-  async verifyIdToken (params: ProviderClient.Input): Promise<any> {
-    const client = new OAuth2Client(params.clientId)
+  async verifyIdToken ({ clientId, token }: Params): Promise<any> {
+    const client = new OAuth2Client(clientId)
     return await client.verifyIdToken({
-      idToken: params.token,
-      audience: params.clientId
+      idToken: token,
+      audience: clientId
     })
   }
 }

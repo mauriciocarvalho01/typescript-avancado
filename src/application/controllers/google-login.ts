@@ -11,15 +11,15 @@ export class GoogleLoginController extends Controller {
     super()
   }
 
-  async perform (httpRequest: HttpRequest): Promise<HttpResponse<HttpResponseModel>> {
-    const accessToken = await this.googleAuth.perform({ token: httpRequest.token })
+  async perform ({ token }: HttpRequest): Promise<HttpResponse<HttpResponseModel>> {
+    const accessToken = await this.googleAuth.perform({ token })
     if (accessToken instanceof AccessToken) return this.httpHelper.ok({ accessToken: accessToken.value })
     return this.httpHelper.unauthorized()
   }
 
-  override buildValidators (httpRequest: HttpRequest): Validator[] {
+  override buildValidators ({ token }: HttpRequest): Validator[] {
     return [
-      ...Builder.of({ value: httpRequest.token, fieldName: 'token' }).required().build()
+      ...Builder.of({ value: token, fieldName: 'token' }).required().build()
     ]
   }
 }
