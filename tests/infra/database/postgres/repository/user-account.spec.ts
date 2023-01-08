@@ -1,24 +1,22 @@
-import { makeFakeDb, FakeDb } from '@/tests/infra/database/postgres/mocks'
 import { PgUserAccountRepository } from '@/infra/database/postgres/repository'
+import { PgConnection } from '@/infra/database/postgres/helpers'
 import { PgUser } from '@/infra/database/postgres/entities'
 
-import { Repository } from 'typeorm'
-import { IBackup } from 'pg-mem'
+import { ObjectLiteral, Repository } from 'typeorm'
+
 
 describe('PgUserAccountRepository', () => {
   let sut: PgUserAccountRepository
-  let pgUserRepository: Repository<PgUser>
-  let backup: IBackup
-  let fakeDb: FakeDb
+  let pgUserRepository: Repository<ObjectLiteral>
+  let pgConnection: PgConnection
   beforeAll(async () => {
-    fakeDb = await makeFakeDb([PgUser])
-    backup = fakeDb.db.backup()
-    pgUserRepository = fakeDb.dataSource.getRepository(PgUser)
+    pgConnection = PgConnection.instance
+    await pgConnection.connect()
+    pgUserRepository = pgConnection.getRepository(PgUser)
   })
 
   beforeEach(() => {
-    backup.restore()
-    sut = new PgUserAccountRepository(fakeDb.dataSource)
+    sut = new PgUserAccountRepository()
   })
 
   describe('load', () => {

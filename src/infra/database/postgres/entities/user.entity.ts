@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm'
 
-@Entity({ name: 'usuarios' })
+@Entity('usuarios')
 export class PgUser {
   @PrimaryGeneratedColumn()
     id!: number
@@ -13,4 +13,10 @@ export class PgUser {
 
   @Column({ name: 'id_google', nullable: true })
     googleId?: string
+
+  @Column({ name: 'foto', nullable: true })
+    pictureUrl?: string
+
+  @Column({ name: 'iniciais', nullable: true })
+    initials?: string
 }

@@ -1,7 +1,9 @@
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
 import { PgUser } from '@/infra/database/postgres/entities'
+import { PgConnection } from '@/infra/database/postgres/helpers'
 
-import { DataSource, Repository } from 'typeorm'
+import { ObjectType, Repository, ObjectLiteral } from 'typeorm'
+
 
 type LoadParams = LoadUserAccountRepository.Input
 type LoadResult = LoadUserAccountRepository.Output
@@ -9,13 +11,9 @@ type SaveParams = SaveGoogleAccountRepository.Input
 type SaveResult = SaveGoogleAccountRepository.Output
 
 export class PgUserAccountRepository implements LoadUserAccountRepository, SaveGoogleAccountRepository {
-  private readonly pgUserRepository: Repository<PgUser>
-  constructor (private readonly dataSource: DataSource) {
-    this.pgUserRepository = this.dataSource.getRepository(PgUser)
-  }
-
-  async load ({ email }: LoadParams): Promise<LoadResult> {
-    const pgUser = await this.pgUserRepository.findOne({
+  async load({ email }: LoadParams): Promise<LoadResult> {
+    const pgUserRepository: Repository<ObjectLiteral> = this.getRepository(PgUser)
+    const pgUser = await pgUserRepository.findOne({
       where:
         { email }
     })
@@ -27,15 +25,21 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveG
     }
   }
 
-  async saveWithGoogle ({ id, email, name, googleId }: SaveParams): Promise<SaveResult> {
+  async saveWithGoogle({ id, email, name, googleId }: SaveParams): Promise<SaveResult> {
+    const pgUserRepository: Repository<ObjectLiteral> = this.getRepository(PgUser)
     let resultId: string
     if (id === undefined) {
-      const pgUser = await this.pgUserRepository.save({ email, name, googleId })
+      const pgUser = await pgUserRepository.save({ email, name, googleId })
       resultId = pgUser.id.toString()
     } else {
       resultId = id
-      await this.pgUserRepository.update({ id: parseInt(id) }, { name, googleId })
+      await pgUserRepository.update({ id: parseInt(id) }, { name, googleId })
     }
     return { id: resultId }
+  }
+
+  getRepository<Entity> (entity: ObjectType<Entity>): Repository<ObjectLiteral>{
+    const connection: PgConnection = PgConnection.instance
+    return connection.getRepository(entity)
   }
 }

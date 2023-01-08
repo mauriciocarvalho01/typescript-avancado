@@ -7,7 +7,7 @@ export type FakeDb = {
   db: IMemoryDb
 }
 
-export const makeFakeDb = async (entities?: any[]): Promise<FakeDb> => {
+export const makeConnection = async (entities?: any[]): Promise<FakeDb> => {
   const db = newDb({ autoCreateForeignKeyIndices: true })
   db.public.registerFunction({
     name: 'current_database',
