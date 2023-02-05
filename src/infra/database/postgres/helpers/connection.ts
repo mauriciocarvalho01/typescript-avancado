@@ -5,7 +5,7 @@ export class PgConnection {
   private static callCount: number = 0
   private static _instance: PgConnection | null = null
   private datasource!: DataSource | undefined
-  public static get instance(): PgConnection {
+  public static get instance (): PgConnection {
     if (this._instance === null) {
       this._instance = new PgConnection()
       this.callCount++
@@ -14,9 +14,8 @@ export class PgConnection {
   }
 
   async connect (): Promise<void> {
-    console.log(OrmConfigOptions)
     this.datasource = new DataSource(OrmConfigOptions as DataSourceOptions)
-    this.datasource.initialize()
+    await this.datasource.initialize()
       .then(() => {
         console.log('Data Source has been initialized!')
       })

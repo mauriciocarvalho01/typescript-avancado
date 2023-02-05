@@ -34,7 +34,7 @@ export const makeConnection = async (entities?: any[]): Promise<FakeDb> => {
 
   const dataSource = db.adapters.createTypeormDataSource({
     type: 'postgres',
-    entities: entities ?? ['src/infra/postgres/entities/index.ts']
+    entities: entities ?? ['src/infra/database/**/*.entity.ts']
   })
 
   await dataSource.initialize()

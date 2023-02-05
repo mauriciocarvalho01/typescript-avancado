@@ -1,17 +1,16 @@
 import { LoadUserAccountRepository, SaveGoogleAccountRepository } from '@/data/contracts/repository'
 import { PgUser } from '@/infra/database/postgres/entities'
-import { PgConnection } from '@/infra/database/postgres/helpers'
 
-import { ObjectType, Repository, ObjectLiteral } from 'typeorm'
-
+import { Repository, ObjectLiteral } from 'typeorm'
+import { PgRepository } from './repository'
 
 type LoadParams = LoadUserAccountRepository.Input
 type LoadResult = LoadUserAccountRepository.Output
 type SaveParams = SaveGoogleAccountRepository.Input
 type SaveResult = SaveGoogleAccountRepository.Output
 
-export class PgUserAccountRepository implements LoadUserAccountRepository, SaveGoogleAccountRepository {
-  async load({ email }: LoadParams): Promise<LoadResult> {
+export class PgUserAccountRepository extends PgRepository implements LoadUserAccountRepository, SaveGoogleAccountRepository {
+  async load ({ email }: LoadParams): Promise<LoadResult> {
     const pgUserRepository: Repository<ObjectLiteral> = this.getRepository(PgUser)
     const pgUser = await pgUserRepository.findOne({
       where:
@@ -25,7 +24,7 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveG
     }
   }
 
-  async saveWithGoogle({ id, email, name, googleId }: SaveParams): Promise<SaveResult> {
+  async saveWithGoogle ({ id, email, name, googleId }: SaveParams): Promise<SaveResult> {
     const pgUserRepository: Repository<ObjectLiteral> = this.getRepository(PgUser)
     let resultId: string
     if (id === undefined) {
@@ -36,10 +35,5 @@ export class PgUserAccountRepository implements LoadUserAccountRepository, SaveG
       await pgUserRepository.update({ id: parseInt(id) }, { name, googleId })
     }
     return { id: resultId }
-  }
-
-  getRepository<Entity> (entity: ObjectType<Entity>): Repository<ObjectLiteral>{
-    const connection: PgConnection = PgConnection.instance
-    return connection.getRepository(entity)
   }
 }

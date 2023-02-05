@@ -1,5 +1,5 @@
 import { GoogleApi } from '@/infra/gateways/google'
-import { Environments } from '@/main/config/environments'
+import { Environments } from '@/environments'
 import { makeGoogleProviderClient } from '@/main/factories/http/clients/google'
 
 export const makeGoogleApi = (): GoogleApi => {

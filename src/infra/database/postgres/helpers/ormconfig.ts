@@ -1,7 +1,6 @@
-import { Environments } from '@/main/config/environments'
+import { Environments } from '@/environments'
 const env = Environments.instance.getEnvironments()
 
-console.log(env.environment)
 export const OrmConfigOptions = {
   type: 'postgres',
   host: env.database.host,
