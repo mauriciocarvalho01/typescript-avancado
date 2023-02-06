@@ -27,6 +27,7 @@ export class PgConnection {
   async disconnect (): Promise<void> {
     if (this.datasource === undefined) throw new ConnectionNotFoundError()
     await this.datasource.destroy()
+    console.log('Data Source has been disconnected!')
   }
 
   getRepository<Entity> (entity: ObjectType<Entity>): Repository<ObjectLiteral> {

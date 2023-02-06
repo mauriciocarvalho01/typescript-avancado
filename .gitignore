@@ -104,7 +104,9 @@ dist
 .tern-port
 
 # Credentials file
-environments/.env.*
+src/environments/.env.test
+src/environments/.env.production
+src/environments/.env.development
 
 # Mocks
 tests/mocks
