@@ -11,7 +11,8 @@ module.exports = {
     '!<rootDir>/src/**/index.ts',
     '!<rootDir>/src/**/errors.ts',
     '!<rootDir>/src/**/environments.ts',
-    '!<rootDir>/src/**/ormconfig.ts'
+    '!<rootDir>/src/**/ormconfig.ts',
+    '!<rootDir>/src/**/connection.ts'
   ],
   coverageProvider: 'babel',
   moduleNameMapper: {

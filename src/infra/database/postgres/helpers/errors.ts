@@ -1,13 +1,13 @@
-export class ConnectionNotFoundError extends Error {
+export class DatasourceNotFoundError extends Error {
   constructor () {
-    super('No connection was found')
-    this.name = 'ConnectionNotFoundError'
+    super('No datasource was found')
+    this.name = this.constructor.name
   }
 }
 
 export class TransactionNotFoundError extends Error {
   constructor () {
     super('No transaction was found')
-    this.name = 'TransactionNotFoundError'
+    this.name = this.constructor.name
   }
 }
